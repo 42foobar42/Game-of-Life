@@ -1,0 +1,56 @@
+    /*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 17.06.2014, 18:41:42
+    Author     : alexander
+*/
+html, body{
+    margin: auto;
+}
+
+div#menu div#onOff{
+    display: inline-block;
+    border: 3px solid gainsboro;
+    width: 10px;
+    height: 10px;
+    margin-bottom: -4px;
+    border-radius: 999px;
+}
+
+div#menu div.off{
+    background-color: red;
+}
+
+div#menu div.on{
+background-color: green;
+}
+
+div#playground div.field{
+    border:1px solid graytext;
+    box-sizing: border-box;
+    /*width:50px;
+    height:50px;*/
+    float: left;
+    margin: 0;
+    padding: 0;
+}
+
+div#playground div.row{
+    display: inline;
+    clear:both;
+}
+
+div#playground div.green{
+    background-color: greenyellow;
+}
+
+div#playground div.black{
+    background-color: black;
+}
+
+div#menu{
+    height: 25px;
+}

@@ -7,7 +7,7 @@ var windowwidth;
 
 function controls() {
     $("input#gameStart").click(function() {
-        GameOfLife.init($("input#lengthOfCell").val(), $("input#numOfRows").val(), $("input#loneliness").val(), $("input#birthrateMax").val(),
+        GameOfLife.build($("input#lengthOfCell").val(), $("input#numOfRows").val(), $("input#loneliness").val(), $("input#birthrateMax").val(),
                 $("input#birthrateMin").val(), $("input#overpopulation").val(), $("input#NumOfPalyers").val());
         $("div#menu").show();
         $("div#playground").show();
@@ -51,6 +51,7 @@ $(document).ready(function() {
     $("div#playground").hide();
     initVals();
     controls();
+    GameOfLife.init();
     //makeField();
     //buttons();
 });

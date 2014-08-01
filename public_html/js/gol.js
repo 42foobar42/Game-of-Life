@@ -35,14 +35,12 @@ var GameOfLife = (function() {
                         break;
                     default:
                         $("div#" + changes[i][0]).removeClass(clsName);
-                        //console.log(changes[i][1]);
                         $("div#" + changes[i][0]).addClass(Colors[changes[i][1]]);
-                        ColorCount[clsName]--;                      
+                        ColorCount[clsName]--;
                         ColorCount[Colors[changes[i][1]]]++;
                         break;
                 }
             }
-            //$("input#greencount").val(ColorCount.green);
             $("input#count").val(ColorCount[Colors[$("select#players").val()]]);
             round++;
             isCalculating = false;
@@ -50,24 +48,19 @@ var GameOfLife = (function() {
     }
 
     function calculateField() {
-        //var tempField = field.slice();
         var changes = [];
         var tempField = [];
         for (var i = 0; i < HeightCount; i++) {
             tempField[i] = [];
             for (var d = 0; d < WidthCount; d++) {
                 tempField[i][d] = field[i][d];
-                temp = checkNeighbours(i, d, tempField);
+                var temp = checkNeighbours(i, d, tempField);
                 tempField = temp[0];
                 if (temp[1].length > 0) {
-                    //console.log(temp[1]);
-                    //changes.push(temp[1]);
                     changes[changes.length] = temp[1];
                 }
             }
         }
-        //console.log("end calc");
-        //clearInterval(timer);
         field = tempField.slice();
         return changes;
     }
@@ -82,39 +75,24 @@ var GameOfLife = (function() {
         for (var i = sx; i <= ex; i++) {
             for (var d = sy; d <= ey; d++) {
                 if ((typeof field[i] !== "undefined") && (i !== r || d !== c)) {
-                    // console.log(i);
-                    /*if (field[i][d] === 0) {
-                     obj.black++;
-                     }
-                     if (field[i][d] === 1) {
-                     obj.green++;
-                     }*/
                     obj[Colors[field[i][d]]]++;
                 }
             }
         }
         if (field[r][c] === 0) {
-            // && obj.green >= brithrateMin && obj.green <= brithrateMax
             for (key in obj) {
                 if (key !== "black" && obj[key] >= brithrateMin && obj[key] <= brithrateMax) {
-                    //console.log(key + " = " + obj[key]);
-                    //console.log(r + ", " + c);
+
                     tfield[r][c] = Colors.indexOf(key);
                     change = [r + "_" + c, tfield[r][c]];
                 }
             }
         }
         if (field[r][c] !== 0) {
-            // && (obj.green < loneliness || obj.green > overpopulation)
-            // field[r][c]
-            //for (key in obj) {
-                if (obj[Colors[field[r][c]]] < loneliness || obj[Colors[field[r][c]]] > overpopulation) {
-                    //console.log(obj[Colors[field[r][c]]]);
-                    tfield[r][c] = 0;
-                    change = [r + "_" + c, 0];
-                }
-            //}
-            //console.log("green");
+            if (obj[Colors[field[r][c]]] < loneliness || obj[Colors[field[r][c]]] > overpopulation) {
+                tfield[r][c] = 0;
+                change = [r + "_" + c, 0];
+            }
         }
         return [tfield, change];
     }
@@ -123,7 +101,6 @@ var GameOfLife = (function() {
         $("input#start").click(function() {
             $("div#onOff").removeClass("off");
             $("div#onOff").addClass("on");
-            //field = [];
             round = 0;
             timer = setInterval(function() {
                 play();
@@ -170,39 +147,44 @@ var GameOfLife = (function() {
                 field[i][d] = 0;
             }
         }
-        for(key in ColorCount){
+        for (key in ColorCount) {
             ColorCount[key] = 0;
         }
-        ColorCount.black = row * column;
-        // clear all counts
+        ColorCount.black = row * column;        
         $("input#roundcount").val(0);
         $("input#count").val(0);
     }
     function makeField() {
-        //var windowheight = $(document).height();
-        var innerHTML = "";
+        var playground = document.getElementById('playground');
+        console.log(playground);
         for (row = 0; row < HeightCount; row++) {
-            innerHTML += "<div class='row' id='row_" + row + "'>";
+            var rowDiv = document.createElement("div");
+            rowDiv.className = "row";
+            rowDiv.id = 'row_' + row ;
             field[row] = [];
             for (column = 0; column < WidthCount; column++) {
                 field[row][column] = 0;
-                innerHTML += "<div style='width:" + WidthOfField + "px;height:" + HeightOfField + "px; ";
-                if (column === 0)
-                    innerHTML += "clear:both";
-                innerHTML += "' class='field black' id='" + row + "_" + column + "' onclick='GameOfLife.changeColor(this);'></div>";
+                var cell = document.createElement("div");
+                cell.style.width = WidthOfField +"px";
+                cell.style.height = HeightOfField + "px";
+                if (column === 0) cell.style.clear = "both";
+                cell.className = "field black";
+                cell.id = row + "_" + column;
+                cell.onclick = function(){GameOfLife.changeColor(this);};
+                rowDiv.appendChild(cell);
             }
-            innerHTML += "</div>";
+            playground.appendChild(rowDiv);
         }
         ColorCount.black = row * column;
-        $("#playground").html(innerHTML);
-        console.log(windowwidth);
     }
     return {
-        init: function(length, count, lone, maxbirth, minBrith, overpop, plys) {
+        init: function() {
+            buttons();
+            return GameOfLife;
+        },
+        build: function(length, count, lone, maxbirth, minBrith, overpop, plys) {
             var selectBox = document.createElement("select");
             selectBox.setAttribute('id', 'players');
-            /*WidthOfField = widthOF;
-             HeightOfField = heightOF;*/
             loneliness = lone;
             brithrateMin = minBrith;
             brithrateMax = maxbirth;
@@ -219,7 +201,6 @@ var GameOfLife = (function() {
             $("div#players").html(selectBox);
             WidthOfField = HeightOfField = length;
             HeightCount = Math.floor(($(document).height() - $("div#menu").height()) / length);
-            buttons();
             makeField();
             $("select#players").addClass(Colors[$("select#players").val()]);
             $("input#count").addClass(Colors[$("select#players").val()]);
@@ -242,7 +223,7 @@ var GameOfLife = (function() {
                             $(obj).removeClass(Colors[i]);
                             ColorCount[Colors[i]]--;
                             //console.log(i + " === " + playerIdx);
-                            if (i === parseInt( playerIdx)) {
+                            if (i === parseInt(playerIdx)) {
                                 //console.log("black?");
                                 $(obj).addClass("black");
                                 ColorCount.black++;

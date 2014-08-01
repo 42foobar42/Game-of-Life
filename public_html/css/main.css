@@ -28,6 +28,10 @@ div#menu div.on{
 background-color: green;
 }
 
+div#players{
+    display: inline;
+}
+
 div#playground div.field{
     border:1px solid graytext;
     box-sizing: border-box;
@@ -43,8 +47,30 @@ div#playground div.row{
     clear:both;
 }
 
-div#playground div.green{
+div#playground div.green, option.green, select.green, input.green{
     background-color: greenyellow;
+}
+
+div#playground div.red, option.red,select.red, input.red{ 
+    background-color: red;
+}
+div#playground div.yellow, option.yellow,select.yellow, input.yellow{
+    background-color: yellow;
+} 
+div#playground div.blue, option.blue,select.blue, input.blue{
+    background-color: blue;
+}
+div#playground div.white, option.white,select.white, input.white{
+    background-color: white;
+}
+div#playground div.cyan, option.cyan,select.cyan, input.cyan{
+    background-color: cyan;
+}
+div#playground div.magenta, option.magenta,select.magenta, input.magenta{
+    background-color: magenta;
+}
+div#playground div.orange, option.orange,select.orange, input.orange{
+    background-color: orangered;
 }
 
 div#playground div.black{

@@ -49,6 +49,7 @@ $(document).ready(function() {
     //GameOfLife.init(60, 60, 50, 50);
     $("div#menu").hide();
     $("div#playground").hide();
+    $("div#statistics").hide();
     initVals();
     controls();
     GameOfLife.init();

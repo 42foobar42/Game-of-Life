@@ -8,7 +8,7 @@ var GameOfLife = (function() {
     var HeightOfField = 50;
     var WidthCount = 60;
     var HeightCount = 60;
-    var row, column, timer, loneliness, brithrateMin, brithrateMax, overpopulation, players;
+    var row, column, timer, loneliness, brithrateMin, brithrateMax, overpopulation, players, statistics = [];
     var run = false;
     var field = [];
     var isCalculating = false;
@@ -20,6 +20,8 @@ var GameOfLife = (function() {
         run = true;
         if (isCalculating === false) {
             isCalculating = true;
+            var deads = {"black": 0, "green": 0, "red": 0, "yellow": 0, "blue": 0, "white": 0, "cyan": 0, "magenta": 0, "orange": 0};
+            var borns = {"black": 0, "green": 0, "red": 0, "yellow": 0, "blue": 0, "white": 0, "cyan": 0, "magenta": 0, "orange": 0};
             $("input#roundcount").val(round);
             var changes = calculateField();
             for (var i = 0; i < changes.length; i++) {
@@ -32,17 +34,28 @@ var GameOfLife = (function() {
                         $("div#" + changes[i][0]).addClass("black");
                         ColorCount.black++;
                         ColorCount[clsName]--;
+                        deads[clsName] += 1;
+                        borns.black += 1;
                         break;
                     default:
                         $("div#" + changes[i][0]).removeClass(clsName);
                         $("div#" + changes[i][0]).addClass(Colors[changes[i][1]]);
                         ColorCount[clsName]--;
                         ColorCount[Colors[changes[i][1]]]++;
+                        deads[clsName] += 1;
+                        borns[Colors[changes[i][1]]]+=1;
                         break;
                 }
             }
             $("input#count").val(ColorCount[Colors[$("select#players").val()]]);
-            round++;
+            
+            statistics[round] = [ColorCount, borns, deads];
+            //console.log(statistics);
+            if (ColorCount.black === row * column) {
+                stop();
+                alert("No Cells are alive!");
+            }            
+            round++;    
             isCalculating = false;
         }
     }
@@ -101,25 +114,32 @@ var GameOfLife = (function() {
         $("input#start").click(function() {
             $("div#onOff").removeClass("off");
             $("div#onOff").addClass("on");
-            round = 0;
+            $("input#start").prop('disabled', true);
+            $("input#clear").prop('disabled', true);
+            $("input#stop").prop('disabled', false);
             timer = setInterval(function() {
                 play();
             }, 200);
         });
         $("input#stop").click(function() {
-            run = false;
-            $("div#onOff").removeClass("on");
-            $("div#onOff").addClass("off");
-            clearInterval(timer);
+            stop();
         });
         $("input#clear").click(function() {
             if (run === false) {
                 clearAll();
             }
         });
+        $("input#stats").click(function() {
+            $("div#statistics").html("");
+            $("div#statistics").show();
+            $("div#playground").hide();
+            diagram.init('statistics',$(document).height() - $("div#menu").height(), $(document).width());
+            diagram.setOptions({"rounds": 15});
+            diagram.addData([3,18,57,34,2, 14, 11, 98, 55, 34, 123, 23, 34,10,0],"#00ff00", "something");
+            diagram.draw();
+        });
         $("input#back").click(function() {
             if (run === false) {
-                //var answer = confirm("Stop Game and back to Mainmenu?");
                 if (confirm("Stop Game and back to Mainmenu?") === true) {
                     clearAll();
                     $("#playground").html("");
@@ -139,6 +159,15 @@ var GameOfLife = (function() {
             $("input#count").addClass(Colors[$("select#players").val()]);
         });
     }
+    function stop() {
+        run = false;
+        $("div#onOff").removeClass("on");
+        $("div#onOff").addClass("off");
+        $("input#start").prop('disabled', false);
+        $("input#stop").prop('disabled', true);
+        $("input#clear").prop('disabled', false);
+        clearInterval(timer);
+    }
     function clearAll() {
         $("div.field").removeClass("green");
         $("div.field").addClass("black");
@@ -150,27 +179,31 @@ var GameOfLife = (function() {
         for (key in ColorCount) {
             ColorCount[key] = 0;
         }
-        ColorCount.black = row * column;        
+        ColorCount.black = row * column;
         $("input#roundcount").val(0);
         $("input#count").val(0);
+        round = 0;
+        statistics = [];
     }
     function makeField() {
         var playground = document.getElementById('playground');
-        console.log(playground);
         for (row = 0; row < HeightCount; row++) {
             var rowDiv = document.createElement("div");
             rowDiv.className = "row";
-            rowDiv.id = 'row_' + row ;
+            rowDiv.id = 'row_' + row;
             field[row] = [];
             for (column = 0; column < WidthCount; column++) {
                 field[row][column] = 0;
                 var cell = document.createElement("div");
-                cell.style.width = WidthOfField +"px";
+                cell.style.width = WidthOfField + "px";
                 cell.style.height = HeightOfField + "px";
-                if (column === 0) cell.style.clear = "both";
+                if (column === 0)
+                    cell.style.clear = "both";
                 cell.className = "field black";
                 cell.id = row + "_" + column;
-                cell.onclick = function(){GameOfLife.changeColor(this);};
+                cell.onclick = function() {
+                    GameOfLife.changeColor(this);
+                };
                 rowDiv.appendChild(cell);
             }
             playground.appendChild(rowDiv);
@@ -183,6 +216,8 @@ var GameOfLife = (function() {
             return GameOfLife;
         },
         build: function(length, count, lone, maxbirth, minBrith, overpop, plys) {
+            $("input#start").prop('disabled', false);
+            $("input#stop").prop('disabled', true);
             var selectBox = document.createElement("select");
             selectBox.setAttribute('id', 'players');
             loneliness = lone;
@@ -207,7 +242,6 @@ var GameOfLife = (function() {
             return GameOfLife;
         },
         changeColor: function(obj) {
-            //console.log(obj);
             var pos = $(obj).attr('id').split("_");
             var playerIdx = $("select#players").val();
             if (run === false) {
@@ -222,9 +256,7 @@ var GameOfLife = (function() {
                         if ($(obj).hasClass(Colors[i])) {
                             $(obj).removeClass(Colors[i]);
                             ColorCount[Colors[i]]--;
-                            //console.log(i + " === " + playerIdx);
                             if (i === parseInt(playerIdx)) {
-                                //console.log("black?");
                                 $(obj).addClass("black");
                                 ColorCount.black++;
                                 field[pos[0]][pos[1]] = 0;

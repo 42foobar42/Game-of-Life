@@ -8,14 +8,15 @@ var GameOfLife = (function() {
     var HeightOfField = 50;
     var WidthCount = 60;
     var HeightCount = 60;
-    var row, column, timer, loneliness, brithrateMin, brithrateMax, overpopulation, players, statistics = [];
+    var row, column, timer, loneliness, brithrateMin, brithrateMax, overpopulation, players, statistics = [], DiagrammObj = {};
     var run = false;
     var field = [];
     var isCalculating = false;
     var round = 0;
     var ColorCount = {"black": 0, "green": 0, "red": 0, "yellow": 0, "blue": 0, "white": 0, "cyan": 0, "magenta": 0, "orange": 0};
     var Colors = ["black", "green", "red", "yellow", "blue", "white", "cyan", "magenta", "orange"];
-
+    var diagrammColor = {"total_green": "#00FA9A", "borns_green": "#ADFF2F", "deads_green": "#006400",
+                         "total_red": "#FF0000", "borns_red": "#FF69B4", "deads_red": "#8B0000"};
     function play() {
         run = true;
         if (isCalculating === false) {
@@ -43,19 +44,19 @@ var GameOfLife = (function() {
                         ColorCount[clsName]--;
                         ColorCount[Colors[changes[i][1]]]++;
                         deads[clsName] += 1;
-                        borns[Colors[changes[i][1]]]+=1;
+                        borns[Colors[changes[i][1]]] += 1;
                         break;
                 }
             }
             $("input#count").val(ColorCount[Colors[$("select#players").val()]]);
-            
-            statistics[round] = [ColorCount, borns, deads];
+
+            statistics[round] = {"total": jQuery.extend({}, ColorCount), "borns": borns, "deads": deads};
             //console.log(statistics);
             if (ColorCount.black === row * column) {
                 stop();
                 alert("No Cells are alive!");
-            }            
-            round++;    
+            }
+            round++;
             isCalculating = false;
         }
     }
@@ -126,17 +127,59 @@ var GameOfLife = (function() {
         });
         $("input#clear").click(function() {
             if (run === false) {
+                statistics = [];
                 clearAll();
             }
         });
         $("input#stats").click(function() {
             $("div#statistics").html("");
-            $("div#statistics").show();
-            $("div#playground").hide();
-            diagram.init('statistics',$(document).height() - $("div#menu").height(), $(document).width());
-            diagram.setOptions({"rounds": 15});
-            diagram.addData([3,18,57,34,2, 14, 11, 98, 55, 34, 123, 23, 34,10,0],"#00ff00", "something");
-            diagram.draw();
+            if ($("div#statistics").is(":visible")) {
+                $("div#statistics").hide();
+                $("div#playground").show();
+                $("input#start").prop('disabled', false);
+                $("input#clear").prop('disabled', false);
+                $("input#stop").prop('disabled', false);
+            } else {
+                $("div#statistics").show();
+                $("div#playground").hide();
+                $("input#start").prop('disabled', true);
+                $("input#clear").prop('disabled', true);
+                $("input#stop").prop('disabled', true);
+                diagram.init('statistics', $(document).height() - $("div#menu").height(), $(document).width()*.75);
+                //console.log(players);
+                //console.log(statistics);                
+                DiagrammObj = {};
+                for (var i = 0; i < statistics.length; i++) {
+                    var roundInfo = statistics[i];
+                    for (var key in roundInfo) {                        
+                        for (var plyNo = 1; plyNo <= players; plyNo++) {
+                            if (typeof DiagrammObj[key + "_" + Colors[plyNo]] === "undefined") {
+                                DiagrammObj[key + "_" + Colors[plyNo]] = [];
+                            }
+                            DiagrammObj[key + "_" + Colors[plyNo]].push(roundInfo[key][Colors[plyNo]]);
+                            
+                        }
+                    }
+                }
+                console.log(DiagrammObj);
+                diagram.setOptions({"rounds": round});                
+                for (var key in DiagrammObj) {                    
+                    diagram.addData(DiagrammObj[key], diagrammColor[key], key);
+                }
+                var playerList='<div class="playertable"><table><tr><th></th><th>born</th><th>dead</th><th>total</th></tr>';
+                for (var plyNo = 1; plyNo <= players; plyNo++) {
+                    var ply = Colors[plyNo];
+                    playerList += '<tr><td>' + ply + '</td><td><input onclick="GameOfLife.redraw()" type="checkbox" name="playerlines" value="borns_' + ply + '" checked></td>';
+                    playerList += '<td><input onclick="GameOfLife.redraw()" type="checkbox" name="playerlines" value="deads_' + ply + '" checked></td>'; 
+                    playerList += '<td><input onclick="GameOfLife.redraw()" type="checkbox" name="playerlines" value="total_' + ply + '" checked></td></tr>';
+                    //value="'+ DiagrammObj[ply+'_borns']+'"
+                }
+                //playerList += "<tr><td>" + key + "</td><td></td><td></td><td></td></tr>";
+                playerList+="</table></div>";
+                $("div#statistics").append(playerList); 
+                //diagram.addData([1,2,3,0],"#00ff00", "something");
+                diagram.draw();
+            }
         });
         $("input#back").click(function() {
             if (run === false) {
@@ -145,6 +188,7 @@ var GameOfLife = (function() {
                     $("#playground").html("");
                     $("div#menu").hide();
                     $("div#playground").hide();
+                    $("div#statistics").hide();
                     $("div#mainmenu").show();
                 }
             }
@@ -158,6 +202,13 @@ var GameOfLife = (function() {
             $(this).addClass(Colors[$("select#players").val()]);
             $("input#count").addClass(Colors[$("select#players").val()]);
         });
+    }    
+    function cleanReDraw(){
+        diagram.clearData();        
+        $('input[name="playerlines"]:checked').each(function() {
+            diagram.addData(DiagrammObj[this.value], diagrammColor[this.value], this.value);
+        });
+        diagram.draw();
     }
     function stop() {
         run = false;
@@ -182,8 +233,7 @@ var GameOfLife = (function() {
         ColorCount.black = row * column;
         $("input#roundcount").val(0);
         $("input#count").val(0);
-        round = 0;
-        statistics = [];
+        round = 0;        
     }
     function makeField() {
         var playground = document.getElementById('playground');
@@ -271,6 +321,9 @@ var GameOfLife = (function() {
                 }
             }
             $("input#count").val(ColorCount[Colors[$("select#players").val()]]);
+        },
+        redraw: function(){
+            cleanReDraw();
         }
     };
 }(window));

@@ -4,16 +4,19 @@
  * and open the template in the editor.
  */
 var diagram = (function() {
-    var wrapper, height, width, data = [], options, g = {}, min, max, gridHeight, gridWidth, MaxW, startX,startY;
+    var wrapper, height, width, data = [], options, g = {}, min, max, gridHeight, gridWidth, MaxW, startX, startY, endX, endY, pxPerY, pxPerX, diffY;
+    var XgridLength = 10;
+    var YgridLength = 10;
+    var fontheight = 10;
     function makeGrid() {
+        max = 0;
+        min = 0;
         gridHeight = height * .9;
         gridWidth = width * .9;
-        startX = (width-gridWidth )/2;
-        startY = (height - gridHeight)/2;
-        MaxW = 0;
-        min = 0;
-        max = 0;
-        //console.log(data);
+        startX = (width - gridWidth) / 2;
+        startY = (height - gridHeight) / 2;
+        endX = startX + gridWidth;
+        endY = startY + gridHeight;
         for (var i = 0; i < data.length; i++) {
             var dat = data[i];
             for (var j = 0; j < dat[0].length; j++) {
@@ -21,81 +24,112 @@ var diagram = (function() {
                     min = dat[0][j];
                 if (dat[0][j] > max)
                     max = dat[0][j];
-                if (j > MaxW)
-                    MaxW += 1;
             }
         }
         g.ctx.beginPath();
-        g.ctx.moveTo(startX, gridHeight);
-        g.ctx.lineTo(startX, height - gridHeight);
+        g.ctx.moveTo(startX, startY);
+        //g.ctx.strokeText(max, startX-50, startY);
+        g.ctx.lineTo(startX, endY + YgridLength);
         g.ctx.stroke();
-        g.ctx.moveTo(startX, gridHeight);
-        g.ctx.lineTo(gridWidth, gridHeight);
+
+        g.ctx.strokeText(min, startX - 10, endY);
+        g.ctx.strokeText(0, startX, endY + 10);
+
+        g.ctx.beginPath();
+        g.ctx.lineTo(startX - XgridLength, endY);
+        g.ctx.lineTo(endX, endY);
+        //g.ctx.strokeText(options.rounds, endX, endY+10);
         g.ctx.stroke();
-        //var ppV = gridHeight / (max - min);
-        var Hscale = max - min;
-        var diffsH = gridHeight / 11;
-        var diffsW = gridWidth / 11;
-        // console.log(diffs);
 
-        // check if weniger als 10 werte
-        // und check wenn skala ist kleiner 10
-        // check text length
-        for (var i = 0; i < 10; i++) {
-            g.ctx.beginPath();
-            g.ctx.moveTo(startX * 0.9, gridHeight - (i * diffsH));
-            g.ctx.lineTo(startX * 1.1, gridHeight - (i * diffsH));
-            g.ctx.stroke();
-            g.ctx.strokeText(Math.floor((Hscale / 10) * i), startX * 0.9, gridHeight - (i * diffsH) - 2);
-            g.ctx.beginPath();
-            g.ctx.moveTo((gridWidth-startX ) - (i * diffsW), (gridHeight) * 0.95);
-            g.ctx.lineTo((gridWidth-startX ) - (i * diffsW), (gridHeight) * 1.05);
-            g.ctx.stroke();
-            g.ctx.strokeText(Math.floor((MaxW / 10) * i), width - (gridWidth - (i * diffsW)), (gridHeight) * 1.05);
-            //g.ctx.beginPath();
-            //g.ctx.moveTo((width - gridWidth) * 1.1, gridHeight - (i * diffs));
+        // TODO check if diffY smaller than 10
+        diffY = max - min;
+        pxPerY = diffY / gridHeight;
+        pxPerX = (options.rounds) / gridWidth;
+        console.log(pxPerY * gridHeight);
+        for (var i = 0; i <= 10; i++) {
 
+            if (diffY >= 10) {
+                if (i !== 0) {
+                    // Y scale
+                    g.ctx.strokeStyle = "#000000";
+                    g.ctx.beginPath();
+                    var actHeight = endY - (i * (gridHeight / 10));
+                    g.ctx.moveTo(startX - XgridLength, actHeight);
+                    g.ctx.lineTo(startX + XgridLength, actHeight);
+                    g.ctx.strokeText(Math.floor(pxPerY * (i * (gridHeight / 10))), startX - 10, actHeight);
+                    g.ctx.stroke();
+
+                    g.ctx.strokeStyle = "#D3D3D3";
+                    g.ctx.beginPath();
+                    g.ctx.moveTo(startX + XgridLength, actHeight);
+                    g.ctx.lineTo(startX + gridWidth, actHeight);
+                    g.ctx.stroke();
+                }
+            }
+
+            if (options.rounds >= 10) {
+                // X Scale
+                if (i !== 10) {
+                    g.ctx.strokeStyle = "#000000";
+                    g.ctx.beginPath();
+                    var actWidth = endX - (i * (gridWidth / 10));
+                    g.ctx.moveTo(actWidth, endY + YgridLength);
+                    g.ctx.lineTo(actWidth, endY - YgridLength);
+                    g.ctx.strokeText((options.rounds - 1) - Math.floor(pxPerX * (i * (gridWidth / 10))), actWidth, endY + fontheight + YgridLength);
+                    g.ctx.stroke();
+
+                    g.ctx.strokeStyle = "#D3D3D3";
+                    g.ctx.beginPath();
+                    g.ctx.moveTo(actWidth, endY - YgridLength);
+                    g.ctx.lineTo(actWidth, endY - gridHeight);
+                    g.ctx.stroke();
+                }
+            }
         }
-        g.ctx.beginPath();
-        g.ctx.moveTo(startX * 0.9, height - gridHeight);
-        g.ctx.lineTo(startX * 1.1, height - gridHeight);
-        g.ctx.stroke();
-        g.ctx.beginPath();
-        g.ctx.moveTo(width - (width - gridWidth), (gridHeight) * 0.95);
-        g.ctx.lineTo(width - (width - gridWidth), (gridHeight) * 1.05);
-        g.ctx.stroke();
-        g.ctx.strokeText(max, startX * 0.9, height - gridHeight - 2);
-        g.ctx.strokeText(MaxW, width - (width - gridWidth), (gridHeight) * 1.05);
+        if (options.rounds < 10) {
+            for (var i = 1; i < options.rounds; i++) {
+                g.ctx.strokeStyle = "#000000";
+                g.ctx.beginPath();
+                var actWidth = startX + (i * (gridWidth / (options.rounds - 1)));
+                g.ctx.moveTo(actWidth, endY + YgridLength);
+                g.ctx.lineTo(actWidth, endY - YgridLength);
+                g.ctx.strokeText(i, actWidth, endY + fontheight + YgridLength);
+                g.ctx.stroke();
 
+                g.ctx.strokeStyle = "#D3D3D3";
+                g.ctx.beginPath();
+                g.ctx.moveTo(actWidth, endY - YgridLength);
+                g.ctx.lineTo(actWidth, endY - gridHeight);
+                g.ctx.stroke();
+            }
+        }
+        if (diffY < 10) {
+            for (var i = 0; i <= diffY; i++) {
+                g.ctx.strokeStyle = "#000000";
+                g.ctx.beginPath();
+                var actHeight = endY - (i * (gridHeight / diffY));
+                g.ctx.moveTo(startX - XgridLength, actHeight);
+                g.ctx.lineTo(startX + XgridLength, actHeight);
+                g.ctx.strokeText(i, startX - 10, actHeight);
+                g.ctx.stroke();
+            }
+        }
     }
     function drawData() {
         var ppV = gridHeight / (max - min);
         var ppR = Math.floor(gridWidth / MaxW);
-        var widthSpace =  gridWidth / (options.rounds-1);
-        console.log(gridWidth);
-        console.log(width);
-        console.log("sx: " + startX);
-        
-        g.ctx.beginPath();
-        g.ctx.moveTo(widthSpace*14, 0);
-        g.ctx.lineTo(widthSpace*14, 300);
-        g.ctx.moveTo(width - gridWidth + widthSpace, 0);
-        g.ctx.lineTo(width - gridWidth + widthSpace, 300);
-        g.ctx.stroke();
-        //console.log(gridWidth);
-        console.log(options.rounds + " begin " + widthSpace);
+        var widthSpace = gridWidth / (options.rounds - 1);
+
         for (var i = 0; i < data.length; i++) {
             var dat = data[i];
             //console.log(dat[0]);
             g.ctx.strokeStyle = dat[1];
             g.ctx.beginPath();
-            g.ctx.moveTo(startX, height - (height - gridHeight) - (dat[0][0] * ppV));            //-(dat[0][0]*ppV)
-            for (var d = 1; d < dat[0].length; d++) {
-                //console.log(ppR * d);
-                g.ctx.lineTo(startX + (widthSpace*d), height - (height - gridHeight) - (dat[0][d] * ppV));                
-                //g.ctx.lineTo(width - gridWidth + (widthSpace*d), height - (height - gridHeight) - (dat[0][d] * ppV));
-                console.log(d);
-                console.log((widthSpace*d));
+            var Yfactor = gridHeight / diffY;
+            g.ctx.moveTo(startX, endY - (dat[0][0] * Yfactor));            //-(dat[0][0]*ppV)
+            for (var d = 1; d < dat[0].length; d++) {                
+                g.ctx.lineTo(startX + (widthSpace * d), endY - (dat[0][d] * Yfactor));
+
             }
             g.ctx.stroke();
         }
@@ -112,6 +146,7 @@ var diagram = (function() {
     return {
         init: function(divId, h, w) {
             wrapper = document.getElementById(divId);
+            data = [];
             //console.log(wrapper);
             if (typeof h === "undefined") {
                 height = wrapper.style.height;
@@ -132,10 +167,14 @@ var diagram = (function() {
             data.push(temp);
             return diagram;
         },
+        clearData:function(){
+            data = [];
+        },
         setOptions: function(op) {
             options = op;
         },
         draw: function() {
+            g.ctx.clearRect(0, 0, g.canvas.width, g.canvas.height);
             makeGrid();
             drawData();
         }

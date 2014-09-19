@@ -80,3 +80,8 @@ div#playground div.black{
 div#menu{
     height: 25px;
 }
+
+div#statistics div.playertable{
+    float:left;
+    width:20%;
+}

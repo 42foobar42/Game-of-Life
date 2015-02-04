@@ -26,6 +26,7 @@ var diagram = (function() {
                     max = dat[0][j];
             }
         }
+        g.ctx.strokeStyle = "#000000";
         g.ctx.beginPath();
         g.ctx.moveTo(startX, startY);
         //g.ctx.strokeText(max, startX-50, startY);

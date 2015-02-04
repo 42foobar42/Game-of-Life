@@ -8,15 +8,24 @@ var GameOfLife = (function() {
     var HeightOfField = 50;
     var WidthCount = 60;
     var HeightCount = 60;
-    var row, column, timer, loneliness, brithrateMin, brithrateMax, overpopulation, players, statistics = [], DiagrammObj = {};
+    var row, column, timer, players, statistics = [], DiagrammObj = {};
     var run = false;
     var field = [];
     var isCalculating = false;
     var round = 0;
+    var bornRule;
+    var deathRule;
     var ColorCount = {"black": 0, "green": 0, "red": 0, "yellow": 0, "blue": 0, "white": 0, "cyan": 0, "magenta": 0, "orange": 0};
     var Colors = ["black", "green", "red", "yellow", "blue", "white", "cyan", "magenta", "orange"];
     var diagrammColor = {"total_green": "#00FA9A", "borns_green": "#ADFF2F", "deads_green": "#006400",
-                         "total_red": "#FF0000", "borns_red": "#FF69B4", "deads_red": "#8B0000"};
+                         "total_red": "#FF0000", "borns_red": "#FF69B4", "deads_red": "#8B0000",
+                         "total_yellow": "#FFFF00", "borns_yellow": "#FFFACD", "deads_yellow": "#8B6508",
+                         "total_blue": "#00B2EE", "borns_blue": "#ADD8E6", "deads_blue": "#00008B",
+                         "total_white": "#CDCDC1", "borns_white": "#DCDCDC", "deads_white": "#8B8989",
+                         "total_cyan": "#00ffff", "borns_cyan": "#e0ffff", "deads_cyan": "#008b8b",
+                         "total_magenta": "#FF00FF", "borns_magenta": "#DDA0DD", "deads_magenta": "#8B008B",
+                         "total_orange": "#FFA500", "borns_orange": "#FF8C69", "deads_orange": "#8B4500"
+                        };
     function play() {
         run = true;
         if (isCalculating === false) {
@@ -28,7 +37,6 @@ var GameOfLife = (function() {
             for (var i = 0; i < changes.length; i++) {
                 var clsName = $("div#" + changes[i][0]).attr('class');
                 clsName = clsName.replace("field", "").trim();
-                //console.log(clsName);
                 switch (changes[i][1]) {
                     case 0:
                         $("div#" + changes[i][0]).removeClass(clsName);
@@ -50,8 +58,7 @@ var GameOfLife = (function() {
             }
             $("input#count").val(ColorCount[Colors[$("select#players").val()]]);
 
-            statistics[round] = {"total": jQuery.extend({}, ColorCount), "borns": borns, "deads": deads};
-            //console.log(statistics);
+            statistics[round] = {"total": jQuery.extend({}, ColorCount), "borns": borns, "deads": deads};            
             if (ColorCount.black === row * column) {
                 stop();
                 alert("No Cells are alive!");
@@ -94,16 +101,15 @@ var GameOfLife = (function() {
             }
         }
         if (field[r][c] === 0) {
-            for (key in obj) {
-                if (key !== "black" && obj[key] >= brithrateMin && obj[key] <= brithrateMax) {
-
+            for (var key in obj) {
+                if (key !== "black" && $.inArray(obj[key],bornRule)>=0 ) {
                     tfield[r][c] = Colors.indexOf(key);
                     change = [r + "_" + c, tfield[r][c]];
                 }
             }
         }
-        if (field[r][c] !== 0) {
-            if (obj[Colors[field[r][c]]] < loneliness || obj[Colors[field[r][c]]] > overpopulation) {
+        if (field[r][c] !== 0) {            
+            if($.inArray(obj[Colors[field[r][c]]],deathRule)>=0){
                 tfield[r][c] = 0;
                 change = [r + "_" + c, 0];
             }
@@ -145,9 +151,7 @@ var GameOfLife = (function() {
                 $("input#start").prop('disabled', true);
                 $("input#clear").prop('disabled', true);
                 $("input#stop").prop('disabled', true);
-                diagram.init('statistics', $(document).height() - $("div#menu").height(), $(document).width()*.75);
-                //console.log(players);
-                //console.log(statistics);                
+                diagram.init('statistics', $(document).height() - $("div#menu").height(), $(document).width()*.75);             
                 DiagrammObj = {};
                 for (var i = 0; i < statistics.length; i++) {
                     var roundInfo = statistics[i];
@@ -161,7 +165,6 @@ var GameOfLife = (function() {
                         }
                     }
                 }
-                console.log(DiagrammObj);
                 diagram.setOptions({"rounds": round});                
                 for (var key in DiagrammObj) {                    
                     diagram.addData(DiagrammObj[key], diagrammColor[key], key);
@@ -192,7 +195,7 @@ var GameOfLife = (function() {
                     $("div#mainmenu").show();
                 }
             }
-        });
+        });       
         $("select#players").change(function() {
             $("input#count").val(ColorCount[Colors[$("select#players").val()]]);
             for (var i = 0; i < Colors.length; i++) {
@@ -247,8 +250,9 @@ var GameOfLife = (function() {
                 var cell = document.createElement("div");
                 cell.style.width = WidthOfField + "px";
                 cell.style.height = HeightOfField + "px";
-                if (column === 0)
+                if (column === 0) {
                     cell.style.clear = "both";
+                }
                 cell.className = "field black";
                 cell.id = row + "_" + column;
                 cell.onclick = function() {
@@ -265,15 +269,13 @@ var GameOfLife = (function() {
             buttons();
             return GameOfLife;
         },
-        build: function(length, count, lone, maxbirth, minBrith, overpop, plys) {
+        build: function(length, count, plys, bRule, dRule) {
             $("input#start").prop('disabled', false);
             $("input#stop").prop('disabled', true);
             var selectBox = document.createElement("select");
-            selectBox.setAttribute('id', 'players');
-            loneliness = lone;
-            brithrateMin = minBrith;
-            brithrateMax = maxbirth;
-            overpopulation = overpop;
+            selectBox.setAttribute('id', 'players');            
+            deathRule = dRule;            
+            bornRule = bRule;
             WidthCount = count;
             players = plys;
             for (var i = 0; i < plys; i++) {

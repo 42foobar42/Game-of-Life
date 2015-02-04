@@ -4,14 +4,27 @@
  * and open the template in the editor.
  */
 var windowwidth;
+var MIN_FIELD_WIDTH =  6;
 
-function controls() {
+function controls() {    
     $("input#gameStart").click(function() {
-        GameOfLife.build($("input#lengthOfCell").val(), $("input#numOfRows").val(), $("input#loneliness").val(), $("input#birthrateMax").val(),
-                $("input#birthrateMin").val(), $("input#overpopulation").val(), $("input#NumOfPalyers").val());
-        $("div#menu").show();
-        $("div#playground").show();
-        $("div#mainmenu").hide();
+        var fieldWidth = parseInt($("input#lengthOfCell").val());
+        if(fieldWidth >= MIN_FIELD_WIDTH){
+            var bornRule = [];  
+            var deathRule = [];
+            $("input.brcheckbox:checked").each(function() {
+                bornRule.push(parseInt($( this ).val()));
+            });
+            $("input.drcheckbox:checked").each(function() {
+                deathRule.push(parseInt($( this ).val()));
+            });        
+            GameOfLife.build($("input#lengthOfCell").val(), $("input#numOfRows").val(), $("input#NumOfPalyers").val(), bornRule, deathRule);
+            $("div#menu").show();
+            $("div#playground").show();
+            $("div#mainmenu").hide();
+        } else {
+            alert("Edge Length is lower than " + MIN_FIELD_WIDTH + ". Please chosse a higher length!");
+        }
     });
     $("input#numOfRows").change(function() {
         correctFieldWith();
@@ -25,10 +38,29 @@ function controls() {
     $("input#lengthOfCell").keyup(function() {
         correctFieldCount();
     });
+    $("input.brcheckbox").click(function() {        
+        if($(this).prop("checked")){            
+            var cBox = $("input.drcheckbox[value=" + $(this).val() + "]");
+            if(cBox.prop("checked")){
+                cBox.prop("checked",false);
+            }
+        }        
+    });
+    $("input.drcheckbox").click(function() {        
+        if($(this).prop("checked")){            
+            var cBox = $("input.brcheckbox[value=" + $(this).val() + "]");
+            if(cBox.prop("checked")){
+                cBox.prop("checked",false);
+            }
+        }        
+    });
 }
 
 function correctFieldCount() {
     var fieldWidth = parseInt($("input#lengthOfCell").val());
+    if(fieldWidth < MIN_FIELD_WIDTH){
+        fieldWidth = MIN_FIELD_WIDTH;
+    }
     $("input#numOfRows").val(Math.floor(windowwidth / fieldWidth));
 }
 
@@ -39,9 +71,7 @@ function correctFieldWith() {
 
 function initVals() {
     windowwidth = $(document).width();
-    correctFieldWith();
-
-    console.log(windowwidth);
+    correctFieldWith();    
 }
 
 $(document).ready(function() {

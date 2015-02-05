@@ -8,7 +8,28 @@ html, body{
         width: 40%;
     }
     div#menu input{
-        width: 5%;
+        width: 5%;        
+        background-size: 100% auto;
+    }
+    div#menu input#back{
+        background-image: url(../img/mainmenu.png);        
+        color: transparent;
+    }
+    div#menu input#start{
+        background-image: url(../img/start.png);        
+        color: transparent;
+    }
+    div#menu input#stop{
+        background-image: url(../img/stop.png);        
+        color: transparent;
+    }
+    div#menu input#clear{
+        background-image: url(../img/clear.png);        
+        color: transparent;
+    }
+    div#menu input#stats{
+        background-image: url(../img/stats.png);        
+        color: transparent;
     }
 }
 

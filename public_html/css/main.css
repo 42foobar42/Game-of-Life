@@ -1,14 +1,15 @@
-    /*
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
-*/
-/* 
-    Created on : 17.06.2014, 18:41:42
-    Author     : alexander
-*/
 html, body{
-    margin: auto;
+    margin: auto;    
+}
+
+@media only screen and (max-width: 400px) {
+    body { font-size: 0.8em; }
+    div#mainmenu table tr td:nth-child(1) {
+        width: 40%;
+    }
+    div#menu input{
+        width: 5%;
+    }
 }
 
 div#menu div#onOff{

@@ -4,6 +4,9 @@ html, body{
 
 @media only screen and (max-width: 400px) {
     body { font-size: 0.8em; }
+    .mobilehide{
+        display: none;
+    }
     div#mainmenu table tr td:nth-child(1) {
         width: 40%;
     }

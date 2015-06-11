@@ -5,26 +5,38 @@
  */
 var windowwidth;
 var MIN_FIELD_WIDTH =  6;
+var MAX_FIELD_WIDTH = 200;
 
 function controls() {    
     $("input#gameStart").click(function() {
         var fieldWidth = parseInt($("input#lengthOfCell").val());
-        if(fieldWidth >= MIN_FIELD_WIDTH){
-            var bornRule = [];  
-            var deathRule = [];
-            $("input.brcheckbox:checked").each(function() {
-                bornRule.push(parseInt($( this ).val()));
-            });
-            $("input.drcheckbox:checked").each(function() {
-                deathRule.push(parseInt($( this ).val()));
-            });        
-            GameOfLife.build($("input#lengthOfCell").val(), $("input#numOfRows").val(), $("input#NumOfPalyers").val(), bornRule, deathRule);
-            $("div#menu").show();
-            $("div#playground").show();
-            $("div#mainmenu").hide();
-        } else {
+        var numberOfPlayers = parseInt($("input#NumOfPalyers").val());
+        console.log(numberOfPlayers);
+        if(fieldWidth <= MIN_FIELD_WIDTH){
             alert("Edge Length is lower than " + MIN_FIELD_WIDTH + ". Please chosse a higher length!");
+            return ;
         }
+        if(fieldWidth > MAX_FIELD_WIDTH){
+            alert("Edge Length is higher than " + MAX_FIELD_WIDTH + ". Please chosse a lower length!");
+            return ;
+        }
+        if(numberOfPlayers > 8 || numberOfPlayers < 1){
+            alert("The number of Players is invalid. Please chosse a number between 1 and 8!");
+            return ;
+        }
+        var bornRule = [];  
+        var deathRule = [];
+        $("input.brcheckbox:checked").each(function() {
+            bornRule.push(parseInt($( this ).val()));
+        });
+        $("input.drcheckbox:checked").each(function() {
+            deathRule.push(parseInt($( this ).val()));
+        });        
+        GameOfLife.build($("input#lengthOfCell").val(), $("input#numOfRows").val(), $("input#NumOfPalyers").val(), bornRule, deathRule);
+        $("div#menu").show();
+        $("div#playground").show();
+        $("div#mainmenu").hide();
+            
     });
     $("input#numOfRows").change(function() {
         correctFieldWith();
@@ -75,7 +87,6 @@ function initVals() {
 }
 
 $(document).ready(function() {
-// Handler for .ready() called.
     //GameOfLife.init(60, 60, 50, 50);
     $("div#menu").hide();
     $("div#playground").hide();

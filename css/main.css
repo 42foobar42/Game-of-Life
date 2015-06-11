@@ -1,0 +1,129 @@
+html, body{
+    margin: auto;    
+}
+
+@media only screen and (max-width: 400px) {
+    body { font-size: 0.8em; }
+    .mobilehide{
+        display: none;
+    }
+    div#mainmenu table tr td:nth-child(1) {
+        width: 40%;
+    }
+    div#menu input{
+        width: 5%;        
+        background-size: 100% auto;
+    }
+    div#menu input#back{
+        background-image: url(../img/mainmenu.png);        
+        color: transparent;
+    }
+    div#menu input#start{
+        background-image: url(../img/start.png);        
+        color: transparent;
+    }
+    div#menu input#stop{
+        background-image: url(../img/stop.png);        
+        color: transparent;
+    }
+    div#menu input#clear{
+        background-image: url(../img/clear.png);        
+        color: transparent;
+    }
+    div#menu input#stats{
+        background-image: url(../img/stats.png);        
+        color: transparent;
+    }
+}
+
+div#menu div#onOff{
+    display: inline-block;
+    border: 3px solid gainsboro;
+    width: 10px;
+    height: 10px;
+    margin-bottom: -4px;
+    border-radius: 999px;
+}
+
+div#menu div.off{
+    background-color: red;
+}
+
+div#menu div.on{
+background-color: green;
+}
+
+div#players{
+    display: inline;
+}
+
+div#playground div.field{
+    border:1px solid graytext;
+    box-sizing: border-box;
+    /*width:50px;
+    height:50px;*/
+    float: left;
+    margin: 0;
+    padding: 0;
+}
+
+div#playground div.row{
+    display: inline;
+    clear:both;
+}
+
+div#playground div.green, option.green, select.green, input.green{
+    background-color: greenyellow;
+}
+
+div#playground div.red, option.red,select.red, input.red{ 
+    background-color: red;
+}
+div#playground div.yellow, option.yellow,select.yellow, input.yellow{
+    background-color: yellow;
+} 
+div#playground div.blue, option.blue,select.blue, input.blue{
+    background-color: blue;
+}
+div#playground div.white, option.white,select.white, input.white{
+    background-color: white;
+}
+div#playground div.cyan, option.cyan,select.cyan, input.cyan{
+    background-color: cyan;
+}
+div#playground div.magenta, option.magenta,select.magenta, input.magenta{
+    background-color: magenta;
+}
+div#playground div.orange, option.orange,select.orange, input.orange{
+    background-color: orangered;
+}
+
+div#playground div.black{
+    background-color: black;
+}
+
+div#menu{
+    height: 25px;
+}
+
+div#statistics div.playertable{
+    float:left;
+    width:20%;
+}
+
+div#mainmenu {
+    width:80%;
+    margin-left: 10%; 
+    padding-top: 2%;
+}
+
+div#mainmenu table{
+    border: 5px solid grey;
+    border-radius: 10px;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+div#mainmenu .gsRow{
+    text-align: center;
+}

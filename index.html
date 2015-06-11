@@ -1,1 +1,83 @@
-My Page
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Game of Life</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="css/main.css" rel="stylesheet">
+        <script language="javascript" type="text/javascript" src="js/jquery.js"></script>
+        <script language="javascript" type="text/javascript" src="js/gol.js"></script>
+        <script language="javascript" type="text/javascript" src="js/main.js"></script>
+        <script language="javascript" type="text/javascript" src="js/diagram.js"></script>
+    </head>
+    <body>
+        <div id="menu">
+            <span class="mobilehide">Running:</span> <div id="onOff" class="off"></div> |
+            <input type="button" id="back" value="Mainmenu">
+            <input type="button" id="start" value="Start">
+            <input type="button" id="stop" value="Stop">
+            <input type="button" id="clear" value="Clear">            
+            <input type="button" id="stats" value="Stats">
+            Round: <input type="text" readonly="" id="roundcount" value="0">
+            <div id="players">
+                
+            </div>
+            :<input type="text" readonly="" id="count" value="0">
+            
+        </div>
+        <div id="playground"></div>
+        <div id="mainmenu">
+            <table>
+                <thead>
+                <th colspan="2">Game of life</th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Cells per Row</td>
+                        <td><input type="number" min="10" max="500" value="50" id="numOfRows"></td>
+                    </tr>
+                    <tr>
+                        <td>Edge Length</td>
+                        <td><input min="6" max="200" type="number" value="50" id="lengthOfCell"></td>
+                    </tr>
+                    <tr>
+                        <td>Number of Players</td>
+                        <td><input min="1" max="8" type="number" value="1" id="NumOfPalyers"></td>
+                    </tr>                    
+                    <tr>
+                        <td>Born Rule</td>
+                        <td>
+                            <span class="brule"><input type="checkbox" class="brcheckbox" name="bornrule" value="0" >0</span>
+                            <span class="brule"><input type="checkbox" class="brcheckbox" name="bornrule" value="1" >1</span>
+                            <span class="brule"><input type="checkbox" class="brcheckbox" name="bornrule" value="2" >2</span>
+                            <span class="brule"><input type="checkbox" class="brcheckbox" name="bornrule" value="3" checked="">3</span>
+                            <span class="brule"><input type="checkbox" class="brcheckbox" name="bornrule" value="4" >4</span>
+                            <span class="brule"><input type="checkbox" class="brcheckbox" name="bornrule" value="5" >5</span>
+                            <span class="brule"><input type="checkbox" class="brcheckbox" name="bornrule" value="6" >6</span>
+                            <span class="brule"><input type="checkbox" class="brcheckbox" name="bornrule" value="7" >7</span>
+                            <span class="brule"><input type="checkbox" class="brcheckbox" name="bornrule" value="8" >8</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Death Rule</td>
+                        <td>
+                            <span class="drule"><input type="checkbox" class="drcheckbox" name="bornrule" value="0" checked="">0</span>
+                            <span class="drule"><input type="checkbox" class="drcheckbox" name="bornrule" value="1" checked="">1</span>
+                            <span class="drule"><input type="checkbox" class="drcheckbox" name="bornrule" value="2" >2</span>
+                            <span class="drule"><input type="checkbox" class="drcheckbox" name="bornrule" value="3" >3</span>
+                            <span class="drule"><input type="checkbox" class="drcheckbox" name="bornrule" value="4" checked="">4</span>
+                            <span class="drule"><input type="checkbox" class="drcheckbox" name="bornrule" value="5" checked="">5</span>
+                            <span class="drule"><input type="checkbox" class="drcheckbox" name="bornrule" value="6" checked="">6</span>
+                            <span class="drule"><input type="checkbox" class="drcheckbox" name="bornrule" value="7" checked="">7</span>
+                            <span class="drule"><input type="checkbox" class="drcheckbox" name="bornrule" value="8" checked="">8</span>
+                        </td>
+                    </tr>
+                    <tr class="gsRow">
+                        <td colspan="2"><input type="button" value="Start" id="gameStart"></td>
+                    </tr>
+                </tbody>                    
+            </table>
+        </div>
+        <div id="statistics"></div>
+    </body>
+</html>

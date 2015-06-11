@@ -11,7 +11,6 @@ function controls() {
     $("input#gameStart").click(function() {
         var fieldWidth = parseInt($("input#lengthOfCell").val());
         var numberOfPlayers = parseInt($("input#NumOfPalyers").val());
-        console.log(numberOfPlayers);
         if(fieldWidth <= MIN_FIELD_WIDTH){
             alert("Edge Length is lower than " + MIN_FIELD_WIDTH + ". Please chosse a higher length!");
             return ;
@@ -65,6 +64,12 @@ function controls() {
                 cBox.prop("checked",false);
             }
         }        
+    });
+    $("img#imgBron").click(function() {
+        $( "#bornRuleDesc" ).dialog();      
+    });
+    $("img#imgDeath").click(function() {
+        $( "#bornDeathDesc" ).dialog();      
     });
 }
 

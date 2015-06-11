@@ -13,9 +13,10 @@ html, body{
     div#menu input{
         width: 5%;        
         background-size: 100% auto;
+        background-repeat:no-repeat;
     }
     div#menu input#back{
-        background-image: url(../img/mainmenu.png);        
+        background-image: url(../img/mainmenu.png);
         color: transparent;
     }
     div#menu input#start{
@@ -34,6 +35,18 @@ html, body{
         background-image: url(../img/stats.png);        
         color: transparent;
     }
+}
+
+div#mainmenu img.question{
+    height: 15px;
+    width: auto;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+div#mainmenu div#bornRuleDesc,
+div#mainmenu div#bornDeathDesc{
+    display: none;
 }
 
 div#menu div#onOff{

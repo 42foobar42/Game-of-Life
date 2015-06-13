@@ -46,7 +46,6 @@ var diagram = (function() {
         diffY = max - min;
         pxPerY = diffY / gridHeight;
         pxPerX = (options.rounds) / gridWidth;
-        console.log(pxPerY * gridHeight);
         for (var i = 0; i <= 10; i++) {
 
             if (diffY >= 10) {

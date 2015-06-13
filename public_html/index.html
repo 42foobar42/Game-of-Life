@@ -14,8 +14,7 @@
         <script language="javascript" type="text/javascript" src="js/jquery-ui.min.js"></script>
         <script language="javascript" type="text/javascript" src="js/gol.js"></script>
         <script language="javascript" type="text/javascript" src="js/main.js"></script>
-        <script language="javascript" type="text/javascript" src="js/diagram.js"></script>
-        
+        <script language="javascript" type="text/javascript" src="js/diagram.js"></script>      
         <script>
             (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
             (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -35,7 +34,7 @@
             <input type="button" id="clear" value="Clear">            
             <input type="button" id="stats" value="Stats">
             Round: <input type="text" readonly="" id="roundcount" value="0">
-            <div id="players">
+            <div id="playerWrap">
                 
             </div>
             :<input type="text" readonly="" id="count" value="0">
@@ -45,7 +44,7 @@
         <div id="mainmenu">
             <table>
                 <thead>
-                <th colspan="2">Game of life</th>
+                    <th colspan="2">Game of Life</th>
                 </thead>
                 <tbody>
                     <tr>
@@ -61,7 +60,7 @@
                         <td><input min="1" max="8" type="number" value="1" id="NumOfPalyers"></td>
                     </tr>                    
                     <tr>
-                        <td>Born Rule <img id="imgBron" class="question" alt="Born rule explanation" src="img/question.png" /></td>
+                        <td>Born Rule <img id="imgBron" class="question" alt="Born rule explanation" src="images/question.png" /></td>
                         <td>
                             <span class="brule"><input type="checkbox" class="brcheckbox" name="bornrule" value="0" >0</span>
                             <span class="brule"><input type="checkbox" class="brcheckbox" name="bornrule" value="1" >1</span>
@@ -75,7 +74,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Death Rule <img id="imgDeath" class="question" alt="Death rule explanation" src="img/question.png" /></td>
+                        <td>Death Rule <img id="imgDeath" class="question" alt="Death rule explanation" src="images/question.png" /></td>
                         <td>
                             <span class="drule"><input type="checkbox" class="drcheckbox" name="bornrule" value="0" checked="">0</span>
                             <span class="drule"><input type="checkbox" class="drcheckbox" name="bornrule" value="1" checked="">1</span>
@@ -93,10 +92,10 @@
                     </tr>
                 </tbody>                    
             </table>
-            <div id="bornRuleDesc">
+            <div id="bornRuleDesc" title="Born Rule">
                 If the amount of the neighbours are equal with any selected number a new cell will be born.
             </div>
-            <div id="bornDeathDesc">
+            <div id="bornDeathDesc" title="Death Rule">
                 If the amount of the neighbours are equal with any selected number a the cell will die.
             </div>
         </div>

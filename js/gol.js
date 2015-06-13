@@ -196,15 +196,6 @@ var GameOfLife = (function() {
                 }
             }
         });       
-        $("select#players").change(function() {
-            $("input#count").val(ColorCount[Colors[$("select#players").val()]]);
-            for (var i = 0; i < Colors.length; i++) {
-                $(this).removeClass(Colors[i]);
-                $("input#count").removeClass(Colors[i]);
-            }
-            $(this).addClass(Colors[$("select#players").val()]);
-            $("input#count").addClass(Colors[$("select#players").val()]);
-        });
     }    
     function cleanReDraw(){
         diagram.clearData();        
@@ -262,6 +253,9 @@ var GameOfLife = (function() {
             }
             playground.appendChild(rowDiv);
         }
+        var padding = ($(document).width()-(column*WidthOfField))/2;
+        playground.style['padding-left'] = padding + 'px';
+        $('div#menu').css('padding-left', padding + 'px');
         ColorCount.black = row * column;
     }
     return {
@@ -285,12 +279,21 @@ var GameOfLife = (function() {
                 opt.className = Colors[i + 1];
                 selectBox.appendChild(opt);
             }
-            $("div#players").html(selectBox);
+            $("div#playerWrap").html(selectBox);
             WidthOfField = HeightOfField = length;
-            HeightCount = Math.floor(($(document).height() - $("div#menu").height()) / length);
+            HeightCount = Math.floor(($(window).height() - $("div#menu").height()) / length);
             makeField();
             $("select#players").addClass(Colors[$("select#players").val()]);
             $("input#count").addClass(Colors[$("select#players").val()]);
+            $("select#players").change(function() {
+                $("input#count").val(ColorCount[Colors[$("select#players").val()]]);
+                for (var i = 0; i < Colors.length; i++) {
+                    $(this).removeClass(Colors[i]);
+                    $("input#count").removeClass(Colors[i]);
+                }
+                $(this).addClass(Colors[$("select#players").val()]);
+                $("input#count").addClass(Colors[$("select#players").val()]);
+            });
             return GameOfLife;
         },
         changeColor: function(obj) {
